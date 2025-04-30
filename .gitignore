@@ -107,3 +107,5 @@ obj/
 # Swagger & API documentation
 wwwroot/swagger/
 wwwroot/api-docs/ 
+
+.vscode

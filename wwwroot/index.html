@@ -20,12 +20,31 @@
         
         <div class="connection-panel" id="connectionPanel">
             <div class="form-group">
+                <label for="serverSelect">服务器:</label>
+                <select id="serverSelect" aria-label="選擇MUD伺服器">
+                    <option value="">--選擇伺服器--</option>
+                    <option value="mud.csie.org:3838" selected>三國歪傳 yyy (mud.csie.org:3838)</option>
+                    <option value="mud.revivalworld.org:4000">重生的世界 Revival World (mud.revivalworld.org:4000)</option>
+                    <option value="kk.muds.idv.tw:4000">萬王之王 King of Kings (kk.muds.idv.tw:4000)</option>
+                    <option value="210.59.236.38:7788">再戰江湖 The War In Field (210.59.236.38:7788)</option>
+                    <option value="doom.twmuds.com:4000">失落的國度 DOOM (doom.twmuds.com:4000)</option>
+                    <option value="catworld.muds.me:5555">小貓的世界 The cat world (catworld.muds.me:5555)</option>
+                    <option value="sanc.game.tw:4002">聖殿英雄傳說 Sanctuary (sanc.game.tw:4002)</option>
+                    <option value="fss.twcos.com:5000">五星物語 The Five Star Stories (fss.twcos.com:5000)</option>
+                    <option value="es.clovers.tw:8000">東方故事 Eastern Stories (es.clovers.tw:8000)</option>
+                    <option value="windcloud.twmuds.com:8000">風雲再起 Wind Cloud (windcloud.twmuds.com:8000)</option>
+                    <option value="hopto.mud.ren:4000">異想世界 Break World (hopto.mud.ren:4000)</option>
+                    <option value="jy.mud.com.tw:6666">金庸修真錄 Jin Yong Record (jy.mud.com.tw:6666)</option>
+                    <option value="us.muds.net:4000">東方故二天朝遊俠錄 The Celestial Empire (us.muds.net:4000)</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="hostInput">主机:</label>
-                <input type="text" id="hostInput" value="mud.csie.org" readonly>
+                <input type="text" id="hostInput" value="mud.csie.org">
             </div>
             <div class="form-group">
                 <label for="portInput">端口:</label>
-                <input type="number" id="portInput" value="3838" readonly>
+                <input type="number" id="portInput" value="3838">
             </div>
             <button id="connectButton">连接</button>
             <button id="disconnectButton" disabled>断开连接</button>
@@ -40,7 +59,7 @@
         </main>
         
         <footer>
-            <p>基于.NET 9开发 | 连接到mud.csie.org:3838 | 使用Big5编码</p>
+            <p>基于.NET 9开发 | 连接到<span id="currentServer">mud.csie.org:3838</span> | 使用Big5编码</p>
         </footer>
     </div>
     
@@ -56,5 +75,17 @@
         }
     </script>
     <script src="js/mud-client.js"></script>
+    <script>
+        // 服务器选择功能
+        document.getElementById('serverSelect').addEventListener('change', function() {
+            const serverValue = this.value;
+            if (serverValue) {
+                const [host, port] = serverValue.split(':');
+                document.getElementById('hostInput').value = host;
+                document.getElementById('portInput').value = port;
+                document.getElementById('currentServer').textContent = serverValue;
+            }
+        });
+    </script>
 </body>
 </html> 
