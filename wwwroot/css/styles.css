@@ -6,7 +6,7 @@
     --terminal-background: #0a0a0a;
     --success-color: #2ecc71;
     --error-color: #e74c3c;
-    --font-family: 'Noto Sans Mono', monospace;
+    --font-family: 'Noto Sans TC', monospace, 'Microsoft JhengHei', 'PingFang TC','思源黑體 HW';
 }
 
 * {

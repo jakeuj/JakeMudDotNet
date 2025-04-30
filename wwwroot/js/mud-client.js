@@ -1,12 +1,11 @@
 // DOM元素
-const terminal = document.getElementById('terminal');
-const commandInput = document.getElementById('commandInput');
-const sendButton = document.getElementById('sendButton');
-const connectButton = document.getElementById('connectButton');
-const disconnectButton = document.getElementById('disconnectButton');
-const connectionStatus = document.getElementById('connectionStatus');
-const hostInput = document.getElementById('hostInput');
-const portInput = document.getElementById('portInput');
+let terminal;
+let commandInput;
+let sendButton;
+let connectionButton;
+let connectionStatus;
+let hostInput;
+let portInput;
 
 // 变量
 let connection = null;
@@ -39,6 +38,16 @@ const ANSI_COLOR_MAP = {
 
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
+    // 初始化DOM元素引用
+    terminal = document.getElementById('terminal');
+    commandInput = document.getElementById('commandInput');
+    sendButton = document.getElementById('sendButton');
+    connectionButton = document.getElementById('connectionButton');
+    connectionStatus = document.getElementById('connectionStatus');
+    hostInput = document.getElementById('hostInput');
+    portInput = document.getElementById('portInput');
+    
+    // 初始化UI
     initializeUI();
     
     // 在控制台验证signalR是否可用
@@ -52,8 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeUI() {
     // 添加事件监听器
-    connectButton.addEventListener('click', connect);
-    disconnectButton.addEventListener('click', disconnect);
+    connectionButton.addEventListener('click', toggleConnection);
     sendButton.addEventListener('click', sendCommand);
     
     // 为命令输入添加回车键事件
@@ -62,6 +70,15 @@ function initializeUI() {
             sendCommand();
         }
     });
+}
+
+// 切换连接状态
+function toggleConnection() {
+    if (isConnected) {
+        disconnect();
+    } else {
+        connect();
+    }
 }
 
 async function connect() {
@@ -80,7 +97,7 @@ async function connect() {
         }
         
         // 更新UI状态
-        connectButton.disabled = true;
+        connectionButton.disabled = true;
         appendToTerminal(`正在连接到 ${host}:${port}...\n`, 'system');
         
         // 创建SignalR连接
@@ -105,8 +122,8 @@ async function connect() {
                 // 更新UI
                 commandInput.disabled = true;
                 sendButton.disabled = true;
-                disconnectButton.disabled = true;
-                connectButton.disabled = false;
+                connectionButton.disabled = false;
+                connectionButton.textContent = '连接';
             }
         });
         
@@ -127,20 +144,23 @@ async function connect() {
             // 启用UI元素
             commandInput.disabled = false;
             sendButton.disabled = false;
-            disconnectButton.disabled = false;
+            connectionButton.disabled = false;
+            connectionButton.textContent = '断开连接';
             
             // 聚焦到命令输入框
             commandInput.focus();
         } else {
             appendToTerminal('无法连接到MUD服务器\n', 'error');
             await connection.stop();
-            connectButton.disabled = false;
+            connectionButton.disabled = false;
+            connectionButton.textContent = '连接';
         }
     } catch (error) {
         console.error('连接错误:', error);
         appendToTerminal(`连接错误: ${error.message}\n`, 'error');
         updateConnectionStatus(false);
-        connectButton.disabled = false;
+        connectionButton.disabled = false;
+        connectionButton.textContent = '连接';
     }
 }
 
@@ -162,8 +182,8 @@ async function disconnect() {
         // 更新UI
         commandInput.disabled = true;
         sendButton.disabled = true;
-        disconnectButton.disabled = true;
-        connectButton.disabled = false;
+        connectionButton.disabled = false;
+        connectionButton.textContent = '连接';
     } catch (error) {
         console.error('断开连接错误:', error);
         appendToTerminal(`断开连接错误: ${error.message}\n`, 'error');
@@ -201,8 +221,8 @@ async function sendCommand() {
             // 更新UI
             commandInput.disabled = true;
             sendButton.disabled = true;
-            disconnectButton.disabled = true;
-            connectButton.disabled = false;
+            connectionButton.disabled = false;
+            connectionButton.textContent = '连接';
         } else {
             appendToTerminal(`发送命令错误: ${error.message}\n`, 'error');
         }
@@ -282,7 +302,7 @@ function convertAnsiToHtml(text) {
 
 function updateConnectionStatus(connected) {
     connectionStatus.textContent = connected ? '已连接' : '未连接';
-    connectionStatus.className = connected ? 'connection-status connected' : 'connection-status';
+    connectionStatus.className = `connection-status ${connected ? 'connected' : 'disconnected'}`;
 }
 
 // 处理页面卸载

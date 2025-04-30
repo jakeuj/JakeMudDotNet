@@ -9,13 +9,17 @@
     <link rel="alternate icon" href="favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>MUD Web客户端</h1>
             <div class="connection-status" id="connectionStatus">未连接</div>
+            <div class="header-links">
+                <a id="mudlist-link" href="https://www.revivalworld.org/mud/taiwanmudlist" target="_blank" rel="noopener noreferrer">台灣MUD列表</a> | 
+                <a id="tutorial-link" href="https://endeavoryen.github.io/3yWebsite/" target="_blank" rel="noopener noreferrer">新手教學</a>
+            </div>
         </header>
         
         <div class="connection-panel" id="connectionPanel">
@@ -46,8 +50,7 @@
                 <label for="portInput">端口:</label>
                 <input type="number" id="portInput" value="3838">
             </div>
-            <button id="connectButton">连接</button>
-            <button id="disconnectButton" disabled>断开连接</button>
+            <button id="connectionButton">连接</button>
         </div>
         
         <main>
