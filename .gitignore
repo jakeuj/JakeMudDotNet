@@ -1,0 +1,109 @@
+# .NET Core
+*.swp
+*.~*
+*.dll
+*.pdb
+*.exe
+*.obj
+*.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.sdf
+*.pyc
+*.xml.bak
+bin/
+obj/
+.vs/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+.ionide/
+
+# .NET Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+*.nuget.props
+*.nuget.targets
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# JetBrains Rider / IntelliJ IDEA
+.idea/
+*.sln.iml
+.idea/
+.idea_modules/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Node 
+node_modules/
+npm-debug.log
+
+# Azure Functions directories
+bin/
+obj/
+
+# Swagger & API documentation
+wwwroot/swagger/
+wwwroot/api-docs/ 

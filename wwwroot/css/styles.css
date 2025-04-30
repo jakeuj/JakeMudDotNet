@@ -1,0 +1,295 @@
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --text-color: #ecf0f1;
+    --background-color: #1a1a1a;
+    --terminal-background: #0a0a0a;
+    --success-color: #2ecc71;
+    --error-color: #e74c3c;
+    --font-family: 'Noto Sans Mono', monospace;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow: hidden; /* 防止页面滚动 */
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden; /* 防止容器滚动 */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px; /* 减少上方空间 */
+    flex-shrink: 0; /* 防止头部被压缩 */
+}
+
+h1 {
+    font-size: 1.8rem;
+    color: var(--secondary-color);
+}
+
+.connection-status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: var(--error-color);
+    font-weight: bold;
+}
+
+.connection-status.connected {
+    background-color: var(--success-color);
+}
+
+.connection-panel {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px; /* 减少连接面板的空间 */
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-shrink: 0; /* 防止被压缩 */
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+label {
+    font-weight: bold;
+    min-width: 50px;
+}
+
+input[type="text"],
+input[type="number"] {
+    padding: 8px 12px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: var(--terminal-background);
+    color: var(--text-color);
+    font-family: var(--font-family);
+}
+
+button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--secondary-color);
+    color: white;
+    cursor: pointer;
+    font-family: var(--font-family);
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0; /* 允许main缩小 */
+    position: relative; /* 为固定定位输入区域提供基准 */
+    overflow: hidden; /* 防止内容溢出 */
+}
+
+.terminal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 50px; /* 输入区域的高度 */
+    background-color: var(--terminal-background);
+    border-radius: 5px;
+    padding: 15px;
+    overflow-y: auto;
+    font-family: var(--font-family);
+    white-space: pre-wrap;
+    word-break: break-word;
+    border: 1px solid #333;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    line-height: 1.4;
+    color: #f0f0f0;
+}
+
+/* 添加终端特殊文本样式 */
+.terminal .system {
+    color: #95a5a6;
+    font-style: italic;
+}
+
+.terminal .error {
+    color: var(--error-color);
+    font-weight: bold;
+}
+
+.terminal .success {
+    color: var(--success-color);
+}
+
+.terminal .command {
+    color: #f39c12;
+    font-weight: bold;
+}
+
+/* 滚动条样式 */
+.terminal::-webkit-scrollbar {
+    width: 8px;
+}
+
+.terminal::-webkit-scrollbar-track {
+    background: #111;
+    border-radius: 4px;
+}
+
+.terminal::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+.terminal::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+.input-area {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 45px; /* 固定输入区域高度 */
+    display: flex;
+    gap: 10px;
+    background-color: var(--background-color);
+    padding: 0;
+    border-top: 1px solid #333;
+    z-index: 10; /* 确保在终端区域之上 */
+}
+
+#commandInput {
+    flex: 1;
+    padding: 10px;
+    height: 100%;
+    border-radius: 0; /* 扁平化设计 */
+    border: none;
+    border-right: 1px solid #333;
+    background-color: var(--terminal-background);
+    color: var(--text-color);
+}
+
+#sendButton {
+    padding: 0 15px;
+    height: 100%;
+    border-radius: 0;
+}
+
+footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #95a5a6;
+    padding: 5px 0;
+    flex-shrink: 0; /* 防止被压缩 */
+}
+
+/* 移除闪烁光标效果，因为输入框现在总是可见的 */
+.terminal::after {
+    display: none;
+}
+
+/* 特别针对移动设备的调整 */
+@media (max-width: 768px) {
+    .connection-panel {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 5px;
+    }
+    
+    .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    header {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .connection-status {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .terminal {
+        bottom: 80px; /* 移动设备上输入区域更高 */
+    }
+    
+    .input-area {
+        height: 75px;
+        flex-direction: column;
+    }
+    
+    #commandInput {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #333;
+    }
+    
+    #sendButton {
+        width: 100%;
+        height: 35px;
+    }
+}
+
+/* ANSI顏色相關樣式 */
+.terminal span[style*="color: black"] { color: #000000; }
+.terminal span[style*="color: red"] { color: #e74c3c; }
+.terminal span[style*="color: green"] { color: #2ecc71; }
+.terminal span[style*="color: yellow"] { color: #f1c40f; }
+.terminal span[style*="color: blue"] { color: #3498db; }
+.terminal span[style*="color: magenta"] { color: #9b59b6; }
+.terminal span[style*="color: cyan"] { color: #1abc9c; }
+.terminal span[style*="color: white"] { color: #ecf0f1; }
+
+.terminal span[style*="background-color: black"] { background-color: #000000; }
+.terminal span[style*="background-color: red"] { background-color: #e74c3c; }
+.terminal span[style*="background-color: green"] { background-color: #2ecc71; }
+.terminal span[style*="background-color: yellow"] { background-color: #f1c40f; }
+.terminal span[style*="background-color: blue"] { background-color: #3498db; }
+.terminal span[style*="background-color: magenta"] { background-color: #9b59b6; }
+.terminal span[style*="background-color: cyan"] { background-color: #1abc9c; }
+.terminal span[style*="background-color: white"] { background-color: #ecf0f1; }
+
+/* 固定每行高度，避免闪烁 */
+.terminal div {
+    min-height: 1.4em;
+} 

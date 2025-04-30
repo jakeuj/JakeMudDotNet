@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUD Web客户端</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MUD Web客户端</h1>
+            <div class="connection-status" id="connectionStatus">未连接</div>
+        </header>
+        
+        <div class="connection-panel" id="connectionPanel">
+            <div class="form-group">
+                <label for="hostInput">主机:</label>
+                <input type="text" id="hostInput" value="mud.csie.org" readonly>
+            </div>
+            <div class="form-group">
+                <label for="portInput">端口:</label>
+                <input type="number" id="portInput" value="3838" readonly>
+            </div>
+            <button id="connectButton">连接</button>
+            <button id="disconnectButton" disabled>断开连接</button>
+        </div>
+        
+        <main>
+            <div class="terminal" id="terminal"></div>
+            <div class="input-area">
+                <input type="text" id="commandInput" placeholder="输入命令..." disabled>
+                <button id="sendButton" disabled>发送</button>
+            </div>
+        </main>
+        
+        <footer>
+            <p>基于.NET 9开发 | 连接到mud.csie.org:3838 | 使用Big5编码</p>
+        </footer>
+    </div>
+    
+    <!-- 加载SignalR库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        // 如果CDN加载失败，使用本地版本
+        if (typeof signalR === 'undefined') {
+            console.log('从CDN加载SignalR失败，使用本地版本');
+            var script = document.createElement('script');
+            script.src = '/lib/signalr/signalr.min.js';
+            document.head.appendChild(script);
+        }
+    </script>
+    <script src="js/mud-client.js"></script>
+</body>
+</html> 
