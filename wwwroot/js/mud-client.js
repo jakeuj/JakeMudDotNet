@@ -11,6 +11,11 @@ let portInput;
 let connection = null;
 let isConnected = false;
 
+// 命令历史记录
+let commandHistory = [];
+let historyIndex = -1;
+let currentCommand = '';
+
 // ANSI颜色映射
 const ANSI_COLOR_MAP = {
     '0': 'color: inherit; background-color: inherit;', // 重置
@@ -64,12 +69,75 @@ function initializeUI() {
     connectionButton.addEventListener('click', toggleConnection);
     sendButton.addEventListener('click', sendCommand);
     
-    // 为命令输入添加回车键事件
+    // 为命令输入添加键盘事件
     commandInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             sendCommand();
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            navigateHistory('up');
+        } else if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            navigateHistory('down');
+        } else {
+            // 如果用户开始输入新内容，重置历史索引
+            if (historyIndex !== -1 && event.key.length === 1) {
+                historyIndex = -1;
+            }
         }
     });
+}
+
+// 命令历史导航功能
+function navigateHistory(direction) {
+    if (commandHistory.length === 0) return;
+    
+    if (direction === 'up') {
+        if (historyIndex === -1) {
+            // 保存当前正在输入的命令
+            currentCommand = commandInput.value;
+            historyIndex = commandHistory.length - 1;
+        } else if (historyIndex > 0) {
+            historyIndex--;
+        }
+        commandInput.value = commandHistory[historyIndex];
+    } else if (direction === 'down') {
+        if (historyIndex === -1) return;
+        
+        if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            commandInput.value = commandHistory[historyIndex];
+        } else {
+            // 回到当前正在输入的命令
+            historyIndex = -1;
+            commandInput.value = currentCommand;
+        }
+    }
+    
+    // 将光标移到末尾
+    commandInput.setSelectionRange(commandInput.value.length, commandInput.value.length);
+}
+
+// 添加命令到历史记录
+function addToHistory(command) {
+    // 不添加空命令
+    if (!command.trim()) return;
+    
+    // 如果与最后一个命令相同，不重复添加
+    if (commandHistory.length > 0 && commandHistory[commandHistory.length - 1] === command) {
+        return;
+    }
+    
+    commandHistory.push(command);
+    
+    // 限制历史记录数量（最多保存100条）
+    if (commandHistory.length > 100) {
+        commandHistory.shift();
+    }
+    
+    // 重置历史索引
+    historyIndex = -1;
+    currentCommand = '';
 }
 
 // 切换连接状态
@@ -196,6 +264,9 @@ async function sendCommand() {
     const command = commandInput.value;
     
     try {
+        // 添加到历史记录
+        addToHistory(command);
+        
         // 在终端中回显命令（如果不是空字符串）
         if (command) {
             appendToTerminal(`> ${command}\n`, 'command');
