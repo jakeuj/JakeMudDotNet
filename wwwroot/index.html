@@ -24,7 +24,7 @@
                 <label for="serverSelect">服务器:</label>
                 <select id="serverSelect" aria-label="選擇MUD伺服器">
                     <option value="">--選擇伺服器--</option>
-                    <option value="mud.csie.org:3838" selected>三國歪傳 yyy (mud.csie.org:3838)</option>
+                    <option value="mud.csie.org:3838">三國歪傳 yyy (mud.csie.org:3838)</option>
                     <option value="mud.revivalworld.org:4000">重生的世界 Revival World (mud.revivalworld.org:4000)</option>
                     <option value="kk.muds.idv.tw:4000">萬王之王 King of Kings (kk.muds.idv.tw:4000)</option>
                     <option value="210.59.236.38:7788">再戰江湖 The War In Field (210.59.236.38:7788)</option>
@@ -75,17 +75,5 @@
         }
     </script>
     <script src="js/mud-client.js"></script>
-    <script>
-        // 服务器选择功能
-        document.getElementById('serverSelect').addEventListener('change', function() {
-            const serverValue = this.value;
-            if (serverValue) {
-                const [host, port] = serverValue.split(':');
-                document.getElementById('hostInput').value = host;
-                document.getElementById('portInput').value = port;
-                document.getElementById('currentServer').textContent = serverValue;
-            }
-        });
-    </script>
 </body>
 </html> 

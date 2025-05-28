@@ -6,6 +6,7 @@ let connectionButton;
 let connectionStatus;
 let hostInput;
 let portInput;
+let serverSelect;
 
 // 变量
 let connection = null;
@@ -15,6 +16,14 @@ let isConnected = false;
 let commandHistory = [];
 let historyIndex = -1;
 let currentCommand = '';
+
+// localStorage 键名
+const STORAGE_KEYS = {
+    LAST_SERVER: 'mudclient_last_server',
+    LAST_HOST: 'mudclient_last_host',
+    LAST_PORT: 'mudclient_last_port',
+    COMMAND_HISTORY: 'mudclient_command_history'
+};
 
 // ANSI颜色映射
 const ANSI_COLOR_MAP = {
@@ -51,6 +60,10 @@ document.addEventListener('DOMContentLoaded', function() {
     connectionStatus = document.getElementById('connectionStatus');
     hostInput = document.getElementById('hostInput');
     portInput = document.getElementById('portInput');
+    serverSelect = document.getElementById('serverSelect');
+    
+    // 從localStorage載入設定
+    loadSettings();
     
     // 初始化UI
     initializeUI();
@@ -64,10 +77,105 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// 從localStorage載入設定
+function loadSettings() {
+    try {
+        // 載入命令歷史
+        const savedHistory = localStorage.getItem(STORAGE_KEYS.COMMAND_HISTORY);
+        if (savedHistory) {
+            commandHistory = JSON.parse(savedHistory);
+        }
+        
+        // 載入最後的服務器設定
+        const lastServer = localStorage.getItem(STORAGE_KEYS.LAST_SERVER);
+        const lastHost = localStorage.getItem(STORAGE_KEYS.LAST_HOST);
+        const lastPort = localStorage.getItem(STORAGE_KEYS.LAST_PORT);
+        
+        if (lastServer && serverSelect) {
+            // 設定服務器選擇器
+            serverSelect.value = lastServer;
+            
+            // 如果是自定義服務器（不在列表中），使用儲存的主機和端口
+            if (lastServer === '' && lastHost && lastPort) {
+                hostInput.value = lastHost;
+                portInput.value = lastPort;
+            } else if (lastServer) {
+                // 如果是預設服務器，自動設定主機和端口
+                const [host, port] = lastServer.split(':');
+                if (host && port) {
+                    hostInput.value = host;
+                    portInput.value = port;
+                }
+            }
+        } else if (lastHost && lastPort) {
+            // 如果沒有服務器選擇器，直接設定主機和端口
+            hostInput.value = lastHost;
+            portInput.value = lastPort;
+        }
+        
+        // 更新頁腳顯示
+        updateCurrentServerDisplay();
+        
+    } catch (error) {
+        console.warn('載入設定失敗:', error);
+    }
+}
+
+// 儲存設定到localStorage
+function saveSettings() {
+    try {
+        // 儲存命令歷史
+        localStorage.setItem(STORAGE_KEYS.COMMAND_HISTORY, JSON.stringify(commandHistory));
+        
+        // 儲存當前服務器設定
+        if (serverSelect) {
+            localStorage.setItem(STORAGE_KEYS.LAST_SERVER, serverSelect.value);
+        }
+        localStorage.setItem(STORAGE_KEYS.LAST_HOST, hostInput.value);
+        localStorage.setItem(STORAGE_KEYS.LAST_PORT, portInput.value);
+        
+    } catch (error) {
+        console.warn('儲存設定失敗:', error);
+    }
+}
+
+// 更新當前服務器顯示
+function updateCurrentServerDisplay() {
+    const currentServerSpan = document.getElementById('currentServer');
+    if (currentServerSpan) {
+        currentServerSpan.textContent = `${hostInput.value}:${portInput.value}`;
+    }
+}
+
 function initializeUI() {
     // 添加事件监听器
     connectionButton.addEventListener('click', toggleConnection);
     sendButton.addEventListener('click', sendCommand);
+    
+    // 服務器選擇變更事件
+    if (serverSelect) {
+        serverSelect.addEventListener('change', function() {
+            const serverValue = this.value;
+            if (serverValue) {
+                const [host, port] = serverValue.split(':');
+                hostInput.value = host;
+                portInput.value = port;
+            }
+            updateCurrentServerDisplay();
+            saveSettings(); // 儲存選擇
+        });
+    }
+    
+    // 主機和端口變更事件
+    hostInput.addEventListener('change', function() {
+        updateCurrentServerDisplay();
+        saveSettings();
+    });
+    
+    portInput.addEventListener('change', function() {
+        updateCurrentServerDisplay();
+        saveSettings();
+    });
     
     // 为命令输入添加键盘事件
     commandInput.addEventListener('keydown', function(event) {
@@ -138,6 +246,9 @@ function addToHistory(command) {
     // 重置历史索引
     historyIndex = -1;
     currentCommand = '';
+    
+    // 儲存到localStorage
+    saveSettings();
 }
 
 // 切换连接状态
