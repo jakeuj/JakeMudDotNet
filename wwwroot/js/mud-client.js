@@ -314,7 +314,7 @@ function appendToTerminal(text, className = '') {
 }
 
 function convertAnsiToHtml(text) {
-    // 首先，将文本中的HTML特殊字符进行转义
+    // 首先，將文本中的HTML特殊字符進行轉義
     text = text.replace(/[&<>"']/g, function(m) {
         return {
             '&': '&amp;',
@@ -325,29 +325,52 @@ function convertAnsiToHtml(text) {
         }[m];
     });
     
-    // 然后处理换行符
+    // 然後處理換行符
     text = text.replace(/\r?\n/g, '<br>');
     
-    // 正则表达式匹配ANSI颜色代码: \x1B[ 或 ESC[ 开头，后面跟着数字、分号和字母m
-    // 或者匹配类似 [1;33m 这样的格式
-    const ansiRegex = /(?:\x1B\[|\[)([0-9;]+)m/g;
+    // 正則表達式匹配各種ANSI控制碼
+    // 光標定位: [row;colH 或 [rowH 或 [H
+    const cursorPosRegex = /\[(?:\d+;)?\d*H/g;
     
-    let styleStack = [];  // 用于跟踪当前生效的样式
-    let currentStyles = {}; // 当前的样式集合
+    // 光標移動: [nA (上移) [nB (下移) [nC (右移) [nD (左移)
+    const cursorMoveRegex = /\[(?:\d+)?[ABCD]/g;
     
-    // 替换所有ANSI代码
-    let result = text.replace(ansiRegex, function(match, p1) {
-        // 分割样式代码
+    // 清屏控制: [2J (清全屏) [K (清行)
+    const clearRegex = /\[(?:[0-2]?J|[0-2]?K)/g;
+    
+    // 其他控制碼: [?xxh [?xxl (設置/重置模式)
+    const modeRegex = /\[\?\d+[hl]/g;
+    
+    // 保存/恢復光標: [s [u
+    const saveCursorRegex = /\[[su]/g;
+    
+    // 移除各種控制碼但保留顏色碼
+    text = text.replace(cursorPosRegex, '');
+    text = text.replace(cursorMoveRegex, '');
+    text = text.replace(clearRegex, '');
+    text = text.replace(modeRegex, '');
+    text = text.replace(saveCursorRegex, '');
+    
+    // 處理顏色ANSI碼：\x1B[ 或 ESC[ 開頭，後面跟著數字、分號和字母m
+    // 或者匹配類似 [1;33m 這樣的格式
+    const ansiColorRegex = /(?:\x1B\[|\[)([0-9;]+)m/g;
+    
+    let styleStack = [];  // 用於跟蹤當前生效的樣式
+    let currentStyles = {}; // 當前的樣式集合
+    
+    // 替換所有ANSI顏色代碼
+    let result = text.replace(ansiColorRegex, function(match, p1) {
+        // 分割樣式代碼
         const codes = p1.split(';');
         
-        // 处理重置代码
+        // 處理重置代碼
         if (codes.includes('0')) {
             styleStack = [];
             currentStyles = {};
             return '</span><span style="">';
         }
         
-        // 处理其他代码
+        // 處理其他代碼
         let styleString = '';
         for (const code of codes) {
             if (ANSI_COLOR_MAP[code]) {
@@ -355,17 +378,17 @@ function convertAnsiToHtml(text) {
             }
         }
         
-        // 构建样式字符串
+        // 構建樣式字符串
         styleString = Object.values(currentStyles).join(' ');
         
-        // 关闭之前的span并打开新的
+        // 關閉之前的span並打開新的
         return `</span><span style="${styleString}">`;
     });
     
-    // 确保文本开始和结束时有适当的span标签
+    // 確保文本開始和結束時有適當的span標籤
     result = `<span style="">${result}</span>`;
     
-    // 确保不会有空的span标签
+    // 確保不會有空的span標籤
     result = result.replace(/<span style=""><\/span>/g, '');
     
     return result;
